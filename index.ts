@@ -109,10 +109,10 @@ export default class StudioSDK {
 
   }
 
-  private getUrl(type: 'api' | 'media', methodArray: (string | number)[]) {
+  private getUrl(type: 'api' | 'media', methodArray: string[]) {
 
     const method = methodArray.filter((single) => single);
-    const urlArray = [];
+    const urlArray: string[] = [];
     let useEndpoint: string;
 
     if (this.mode === 'custom') {
@@ -480,7 +480,7 @@ export default class StudioSDK {
       return StudioSDK.handleCall<ListOfModels<Content>>(
         {
           method: 'GET',
-          url: this.getUrl('api', ['editor', this.company, this.project, 'list', site]),
+          url: this.getUrl('api', ['editor', this.company, this.project, 'list', site.toString()]),
           headers: this.getHeaders(),
           params,
         },
@@ -510,7 +510,7 @@ export default class StudioSDK {
     list: (site: number = 0, search?: string, tags?: string[], type?: string, sort?: number, order?: string) => StudioSDK.handleCall<DataObject<Customers>>(
       {
         method: 'GET',
-        url: this.getUrl('api', ['customers', this.company, this.project, 'list', site]),
+        url: this.getUrl('api', ['customers', this.company, this.project, 'list', site.toString()]),
         headers: this.getHeaders(),
         params: {
           search,
@@ -636,7 +636,7 @@ export default class StudioSDK {
     list: (site: number = 0, search?: string, tags?: string[], state?: string, sort?: string, order?: number) => StudioSDK.handleCall<DataObject<List[]>>(
       {
         method: 'GET',
-        url: this.getUrl('api', ['lists', this.company, this.project, 'list', site]),
+        url: this.getUrl('api', ['lists', this.company, this.project, 'list', site.toString()]),
         headers: this.getHeaders(),
         params: {
           search,
@@ -706,7 +706,7 @@ export default class StudioSDK {
       list: (listId: string, site: number = 0, search?: string, tags?: string[], state?: string[], sort?: string, order?: number) => StudioSDK.handleCall<DataObject<ListParticipants>>(
         {
           method: 'GET',
-          url: this.getUrl('api', ['lists', 'participants', this.company, this.project, listId, 'list', site]),
+          url: this.getUrl('api', ['lists', 'participants', this.company, this.project, listId, 'list', site.toString()]),
           headers: this.getHeaders(),
           params: {
             search,
