@@ -1,6 +1,6 @@
 {
   "name": "@lilaquadrat/sdk",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "sdk for accessing STUDIO api",
   "author": {
     "email": "m.schuebel@lila2.de",
@@ -11,6 +11,11 @@
     "url": "https://github.com/lilaquadrat/sdk"
   },
   "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "prepublish": "tsc",
+    "release": "standard-version"
+  },
   "dependencies": {
     "@lilaquadrat/interfaces": "^1.0.2",
     "@lilaquadrat/studio": "^6.0.2",
