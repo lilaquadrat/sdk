@@ -11,6 +11,11 @@
     "url": "https://github.com/lilaquadrat/sdk"
   },
   "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "prepublish": "tsc",
+    "release": "standard-version"
+  },
   "dependencies": {
     "@lilaquadrat/interfaces": "^1.0.2",
     "@lilaquadrat/studio": "^6.0.2",
