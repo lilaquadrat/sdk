@@ -1,0 +1,29 @@
+{
+  "name": "@lilaquadrat/sdk",
+  "version": "0.0.1",
+  "description": "sdk for accessing STUDIO api",
+  "author": {
+    "email": "m.schuebel@lila2.de",
+    "name": "Mathias Schübel",
+    "url": "https://lilaquadrat.de"
+  },
+  "repository": {
+    "url": "https://github.com/lilaquadrat/sdk"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@lilaquadrat/interfaces": "^1.0.2",
+    "@lilaquadrat/studio": "^6.0.2",
+    "axios": "^1.6.7"
+  },
+  "devDependencies": {
+    "cz-conventional-changelog": "^3.3.0",
+    "standard-version": "^9.5.0",
+    "typescript": "^5.3.3"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
