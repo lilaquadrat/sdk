@@ -11,11 +11,12 @@
         ],
         "declaration": true,
         "outDir": "./lib",
+        "rootDir": "./",
         "strict": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true,
-        "noImplicitAny": true,
+        "noImplicitAny": false,
         "noImplicitReturns": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
@@ -23,10 +24,10 @@
         "sourceMap": true
     },
     "include": [
-        "sdk.ts"
+        "index.ts"
     ],
     "exclude": [
         "node_modules",
-        "dist"
+        "lib"
     ]
 }

@@ -375,10 +375,10 @@
   dependencies:
     typescript "^5.3.3"
 
-"@lilaquadrat/studio@^6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@lilaquadrat/studio/-/studio-6.0.2.tgz#18211983868b99c4244121280e2a67492879d2c6"
-  integrity sha512-otJJY6RZLQ6/pTOH9yhYWJegNp41ywjLJiSZARjqZRkSat6gCaLXmjTbhsPuxS2S0vlS6RBx1vIar9hkj5hXTg==
+"@lilaquadrat/studio@^6.1.0":
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/@lilaquadrat/studio/-/studio-6.1.0.tgz#914cfd670389453be585814b3c106dfb929c6faf"
+  integrity sha512-qmizcmLrv3OESRXvhbT7Zy54ZxAeiFXlY9Sz4LLBHW/WpQ3+XBos/Ggr06BqEIbnMDV1vZv9vRbZypnSADvagg==
   dependencies:
     "@azure/arm-dns" "^5.0.0"
     "@azure/identity" "^4.0.0"
