@@ -368,17 +368,17 @@
   resolved "https://registry.yarnpkg.com/@hutson/parse-repository-url/-/parse-repository-url-3.0.2.tgz#98c23c950a3d9b6c8f0daed06da6c3af06981340"
   integrity sha512-H9XAx3hc0BQHY6l+IFSWHDySypcXsvsuLhgYLUGywmJ5pswRVQJUHpOsobnLYp2ZUaUlKiKDrgWWhosOwAEM8Q==
 
-"@lilaquadrat/interfaces@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@lilaquadrat/interfaces/-/interfaces-1.0.2.tgz#aa8ba0b0d9dd8506ac9ed8a35e5dc5b6f69214bb"
-  integrity sha512-Z7qO9Ih5BeoU26R4MjZdHcHv45dBuV0Lzmw+sUJdfPBwUwCwmjQbohMCokxfkce4uzRz7Xb0GYgVQZUltevMHQ==
+"@lilaquadrat/interfaces@^1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@lilaquadrat/interfaces/-/interfaces-1.3.1.tgz#4619212f5e4264b57cd8e7f9c0dc6ce9885be4ae"
+  integrity sha512-z5nIlI8uOeHUVImHmeUfbEroa2/5jGyUl7ZqfaFTvmaMiENCjXJYD1rwHqUuTb++kjCfkTKe95GHZVx8wkOGSg==
   dependencies:
     typescript "^5.3.3"
 
-"@lilaquadrat/studio@^6.1.0":
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/@lilaquadrat/studio/-/studio-6.1.0.tgz#914cfd670389453be585814b3c106dfb929c6faf"
-  integrity sha512-qmizcmLrv3OESRXvhbT7Zy54ZxAeiFXlY9Sz4LLBHW/WpQ3+XBos/Ggr06BqEIbnMDV1vZv9vRbZypnSADvagg==
+"@lilaquadrat/studio@^8.1.1":
+  version "8.1.1"
+  resolved "https://registry.yarnpkg.com/@lilaquadrat/studio/-/studio-8.1.1.tgz#d6445a96f6a6ef87089f33516380579fccef785f"
+  integrity sha512-8PAwiOu0tGr92tAVAv6tl3ylj8mF/PNMF3+rJOSgi6/lh5aCEtjSljiw2e6OhTyjO6V9Q1sBi2tkzy48TCzSEw==
   dependencies:
     "@azure/arm-dns" "^5.0.0"
     "@azure/identity" "^4.0.0"
@@ -388,7 +388,7 @@
     "@azure/storage-blob" "^12.17.0"
     "@azure/storage-file-share" "^12.17.0"
     "@azure/storage-queue" "^12.16.0"
-    "@lilaquadrat/interfaces" "^1.0.2"
+    "@lilaquadrat/interfaces" "^1.3.1"
     "@root/acme" "^3.1.0"
     "@root/csr" "^0.8.1"
     "@root/keypairs" "^0.10.0"
