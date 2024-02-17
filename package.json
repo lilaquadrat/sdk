@@ -1,6 +1,6 @@
 {
   "name": "@lilaquadrat/sdk",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "sdk for accessing STUDIO api",
   "author": {
     "email": "m.schuebel@lila2.de",
