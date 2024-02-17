@@ -1,5 +1,5 @@
 import axios, { AxiosResponse, AxiosRequestConfig, HttpStatusCode } from 'axios';
-import { Content, CustomerPerson, Customers, DataObject, List, ListOfModels, ListParticipants, ListPartiticpantsDetails } from '@lilaquadrat/interfaces';
+import { BasicData, Contact, ContactAgreement, Content, Customers, DataObject, List, ListOfModels, ListParticipants, ListPartiticpantsDetails, Location } from '@lilaquadrat/interfaces';
 import { hardCopy } from '@lilaquadrat/studio/lib/esm/frontend';
 
 // const mockJs = {};
@@ -80,18 +80,16 @@ export default class StudioSDK {
   universalModel!: string;
 
   options: {
+    app: string,
     company?: string,
     project?: string,
     authToken?: string,
     mode?: SDKModes,
     customEndpoints?: { api: string, media: string }
     universalModel?: string
-  } = {};
+  } = { app: '' };
 
-  constructor(
-    app: string,
-    options: StudioSDK['options'],
-  ) {
+  constructor(options: StudioSDK['options']) {
 
     if (options.authToken) this.authToken = options.authToken;
 
@@ -103,7 +101,7 @@ export default class StudioSDK {
 
     if (options.project) this.project = options.project;
 
-    this.app = app;
+    this.app = options.app;
 
     if (options.universalModel) this.universalModel = options.universalModel;
 
@@ -314,7 +312,7 @@ export default class StudioSDK {
   public = {
     content: {
 
-      fetch: (type: string, link: string, options?: { state?: 'draft' | 'publish' }) => StudioSDK.handleCall<Content>(
+      fetch: (type: string, link: string, options?: { state?: 'draft' | 'publish' }) => StudioSDK.handleCall<BasicData<Content>>(
         {
           method: 'GET',
           url: this.getUrl('api', ['public', 'content', type, link]),
@@ -327,7 +325,7 @@ export default class StudioSDK {
 
         const params = { search, ...options };
 
-        return StudioSDK.handleCall<Content>(
+        return StudioSDK.handleCall<BasicData<Content>>(
           {
             method: 'GET',
             url: this.getUrl('api', ['public', 'content', type, 'search', site.toString()]),
@@ -338,7 +336,7 @@ export default class StudioSDK {
 
       },
 
-      predefined: (id: string) => StudioSDK.handleCall<Content>(
+      predefined: (id: string) => StudioSDK.handleCall<BasicData<Content>>(
         {
           method: 'GET',
           url: this.getUrl('api', ['public', 'content', 'lilaquadrat', 'studio', id]),
@@ -351,7 +349,7 @@ export default class StudioSDK {
         },
       ),
 
-      predefinedLatest: (categories: string[]) => StudioSDK.handleCall<Content>(
+      predefinedLatest: (categories: string[]) => StudioSDK.handleCall<BasicData<Content>>(
         {
           method: 'GET',
           url: this.getUrl('api', ['public', 'content', 'lilaquadrat', 'studio', 'latest']),
@@ -366,7 +364,7 @@ export default class StudioSDK {
         },
       ),
 
-      getById: (id: string) => StudioSDK.handleCall<Content>(
+      getById: (id: string) => StudioSDK.handleCall<BasicData<Content>>(
         {
           method: 'GET',
           url: this.getUrl('api', ['public', 'content', this.company, this.project, id]),
@@ -379,7 +377,7 @@ export default class StudioSDK {
         },
       ),
 
-      getByInternalId: (id: string) => StudioSDK.handleCall<Content>(
+      getByInternalId: (id: string) => StudioSDK.handleCall<BasicData<Content>>(
         {
           method: 'GET',
           url: this.getUrl('api', ['public', 'content', this.company, this.project, 'internal', id]),
@@ -395,7 +393,7 @@ export default class StudioSDK {
     },
 
     lists: {
-      join: (listId: string, person: CustomerPerson, message: string, category: string, agreements: any) => StudioSDK.handleCall<Customers>(
+      join: (listId: string, person: Contact, message: string | undefined, category: string, agreements: ContactAgreement[]) => StudioSDK.handleCall<Customers>(
         {
           method: 'POST',
           url: this.getUrl('api', ['public', 'lists', 'participants', this.company, this.project, listId, 'join']),
@@ -426,6 +424,86 @@ export default class StudioSDK {
         },
       ),
     },
+  };
+
+  members = {
+    content: {
+
+      fetch: (type: string, link: string, options?: { state?: 'draft' | 'publish' }) => StudioSDK.handleCall<BasicData<Content>>(
+        {
+          method: 'GET',
+          url: this.getUrl('api', ['members', 'content', type, link]),
+          headers: this.getHeaders(),
+          params: options,
+        },
+      ),
+
+      search: (type: string, search: string, site: number = 1, options?: { state?: 'draft' | 'publish' }) => {
+
+        const params = { search, ...options };
+
+        return StudioSDK.handleCall<BasicData<Content>>(
+          {
+            method: 'GET',
+            url: this.getUrl('api', ['members', 'content', type, 'search', site.toString()]),
+            headers: this.getHeaders(),
+            params,
+          },
+        );
+
+      },
+
+      getById: (id: string) => StudioSDK.handleCall<BasicData<Content>>(
+        {
+          method: 'GET',
+          url: this.getUrl('api', ['members', 'content', this.company, this.project, id]),
+          headers: this.getHeaders(),
+        },
+        {
+          group: 'editor',
+          action: 'single',
+          id,
+        },
+      ),
+
+      getByInternalId: (id: string) => StudioSDK.handleCall<BasicData<Content>>(
+        {
+          method: 'GET',
+          url: this.getUrl('api', ['members', 'content', this.company, this.project, 'internal', id]),
+          headers: this.getHeaders(),
+        },
+        {
+          group: 'editor',
+          action: 'single',
+          id,
+        },
+      ),
+
+    },
+
+    lists: {},
+    me: {
+
+      connect: (customerId: string) => StudioSDK.handleCall<any>(
+        {
+          method: 'PUT',
+          url: this.getUrl('api', ['members', 'me', this.company, this.project, 'connect']),
+          headers: this.getHeaders(),
+          data: { customerId },
+        },
+      ),
+
+      isConnected: () => StudioSDK.handleCall<any>(
+        {
+          method: 'HEAD',
+          url: this.getUrl('api', ['members', 'me', this.company, this.project, 'connected', this.app]),
+          headers: this.getHeaders(),
+        },
+      ),
+
+
+
+    }
   };
 
 
