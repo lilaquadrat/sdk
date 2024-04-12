@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.6](https://github.com/lilaquadrat/sdk/compare/v0.0.5...v0.0.6) (2024-04-12)
+
+
+### Features
+
+* **getbyfilename, lists, me:** get content by filename, join lists for members and get my data ([5e2bed2](https://github.com/lilaquadrat/sdk/commit/5e2bed2780a29de43a7924ba2b9a8ead6c224fab))
+
 ### [0.0.5](https://github.com/lilaquadrat/sdk/compare/v0.0.4...v0.0.5) (2024-02-17)
 
 

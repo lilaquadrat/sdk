@@ -1,5 +1,5 @@
 import axios, { AxiosResponse, AxiosRequestConfig, HttpStatusCode } from 'axios';
-import { BasicData, Contact, ContactAgreement, Content, Customers, DataObject, List, ListOfModels, ListParticipants, ListPartiticpantsDetails, Location } from '@lilaquadrat/interfaces';
+import { BasicData, Contact, ContactAgreement, Content, Customers, DataObject, List, ListOfModels, ListParticipants, ListPartiticpantsDetails, Location, Me } from '@lilaquadrat/interfaces';
 import { hardCopy } from '@lilaquadrat/studio/lib/esm/frontend';
 
 // const mockJs = {};
@@ -377,6 +377,22 @@ export default class StudioSDK {
         },
       ),
 
+      getByFilename: (filename: string) => StudioSDK.handleCall<BasicData<Content>>(
+        {
+          method: 'GET',
+          url: this.getUrl('api', ['public', 'content', this.company, this.project, 'filename']),
+          headers: this.getHeaders(),
+          params: {
+            filename
+          }
+        },
+        {
+          group: 'editor',
+          action: 'single',
+          id: filename,
+        },
+      ),
+
       getByInternalId: (id: string) => StudioSDK.handleCall<BasicData<Content>>(
         {
           method: 'GET',
@@ -466,6 +482,24 @@ export default class StudioSDK {
         },
       ),
 
+
+      getByFilename: (filename: string) => StudioSDK.handleCall<BasicData<Content>>(
+        {
+          method: 'GET',
+          url: this.getUrl('api', ['members', 'content', this.company, this.project, 'filename']),
+          headers: this.getHeaders(),
+          params: {
+            filename
+          }
+        },
+        {
+          group: 'editor',
+          action: 'single',
+          id: filename,
+        },
+      ),
+
+
       getByInternalId: (id: string) => StudioSDK.handleCall<BasicData<Content>>(
         {
           method: 'GET',
@@ -481,7 +515,39 @@ export default class StudioSDK {
 
     },
 
-    lists: {},
+    lists: {
+
+      join: (listId: string, message: string | undefined, category: string, agreements: ContactAgreement[]) => StudioSDK.handleCall<string>(
+        {
+          method: 'POST',
+          url: this.getUrl('api', ['members', 'lists', 'participants', this.company, this.project, listId, 'join']),
+          headers: this.getHeaders(),
+          data: {
+            agreements,
+            message,
+            category,
+          },
+        },
+      ),
+
+      /**
+       * get the state for the logged in used for a specific list
+       */
+      state: (listId: string) => StudioSDK.handleCall<ListParticipants>(
+        {
+          method: 'GET',
+          url: this.getUrl('api', ['members', 'lists', this.company, this.project, listId]),
+          headers: this.getHeaders(),
+        },
+        {
+          group: 'lists',
+          action: 'state',
+          id: listId,
+        },
+      ),
+
+    },
+
     me: {
 
       connect: (customerId: string) => StudioSDK.handleCall<any>(
@@ -490,6 +556,14 @@ export default class StudioSDK {
           url: this.getUrl('api', ['members', 'me', this.company, this.project, 'connect']),
           headers: this.getHeaders(),
           data: { customerId },
+        },
+      ),
+
+      get: () => StudioSDK.handleCall<Me>(
+        {
+          method: 'GET',
+          url: this.getUrl('api', ['members', 'me', this.company]),
+          headers: this.getHeaders(),
         },
       ),
 
