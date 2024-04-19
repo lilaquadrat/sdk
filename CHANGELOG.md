@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.7](https://github.com/lilaquadrat/sdk/compare/v0.0.6...v0.0.7) (2024-04-19)
+
+
+### Features
+
+* **confirm email:** confirm email with and given code ([8c5c77a](https://github.com/lilaquadrat/sdk/commit/8c5c77ac4d7b18daa53ee8f86b05b928469d4229))
+
 ### [0.0.6](https://github.com/lilaquadrat/sdk/compare/v0.0.5...v0.0.6) (2024-04-12)
 
 

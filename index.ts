@@ -559,11 +559,24 @@ export default class StudioSDK {
         },
       ),
 
+      confirmEmail: (confirmationCode: string) => StudioSDK.handleCall<any>(
+        {
+          method: 'PUT',
+          url: this.getUrl('api', ['members', 'me', this.company, this.project, 'confirm']),
+          headers: this.getHeaders(),
+          data: { confirmationCode },
+        },
+      ),
+
       get: () => StudioSDK.handleCall<Me>(
         {
           method: 'GET',
           url: this.getUrl('api', ['members', 'me', this.company]),
           headers: this.getHeaders(),
+        },
+        {
+          group: 'me',
+          action: 'get',
         },
       ),
 
@@ -571,6 +584,14 @@ export default class StudioSDK {
         {
           method: 'HEAD',
           url: this.getUrl('api', ['members', 'me', this.company, this.project, 'connected', this.app]),
+          headers: this.getHeaders(),
+        },
+      ),
+
+      emailConfirmed: () => StudioSDK.handleCall<any>(
+        {
+          method: 'HEAD',
+          url: this.getUrl('api', ['members', 'me', this.company, this.project, 'emailConfirmed', this.app]),
           headers: this.getHeaders(),
         },
       ),
