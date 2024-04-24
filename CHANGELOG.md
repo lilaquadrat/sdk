@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.8](https://github.com/lilaquadrat/sdk/compare/v0.0.7...v0.0.8) (2024-04-24)
+
+
+### Bug Fixes
+
+* **members me:** added project to members me ([fc8f64d](https://github.com/lilaquadrat/sdk/commit/fc8f64d6372a9c791199b7ad80096b9e392d7635))
+
 ### [0.0.7](https://github.com/lilaquadrat/sdk/compare/v0.0.6...v0.0.7) (2024-04-19)
 
 
