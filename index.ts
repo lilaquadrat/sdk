@@ -571,7 +571,7 @@ export default class StudioSDK {
       get: () => StudioSDK.handleCall<Me>(
         {
           method: 'GET',
-          url: this.getUrl('api', ['members', 'me', this.company]),
+          url: this.getUrl('api', ['members', 'me', this.company, this.project]),
           headers: this.getHeaders(),
         },
         {
