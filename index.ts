@@ -1,5 +1,5 @@
 import axios, { AxiosResponse, AxiosRequestConfig, HttpStatusCode } from 'axios';
-import { BasicData, Contact, ContactAgreement, Content, Customers, DataObject, List, ListOfModels, ListParticipants, ListPartiticpantsDetails, Location, Me } from '@lilaquadrat/interfaces';
+import { BasicData, Contact, ContactAgreement, Content, CustomerPerson, Customers, DataObject, List, ListOfModels, ListParticipants, ListPartiticpantsDetails, Location, ObjectIdString } from '@lilaquadrat/interfaces';
 import { hardCopy } from '@lilaquadrat/studio/lib/esm/frontend';
 
 // const mockJs = {};
@@ -409,7 +409,7 @@ export default class StudioSDK {
     },
 
     lists: {
-      join: (listId: string, person: Contact, message: string | undefined, category: string, agreements: ContactAgreement[]) => StudioSDK.handleCall<Customers>(
+      join: (listId: string, person: Contact, message: string | undefined, category: string, agreements: ContactAgreement[], structure: Record<string, string> | undefined, options: {uuid: ObjectIdString, parentId: string}) => StudioSDK.handleCall<{_id: string, id: string}>(
         {
           method: 'POST',
           url: this.getUrl('api', ['public', 'lists', 'participants', this.company, this.project, listId, 'join']),
@@ -419,6 +419,8 @@ export default class StudioSDK {
             agreements,
             message,
             category,
+            structure,
+            options,
           },
         },
       ),
@@ -440,6 +442,53 @@ export default class StudioSDK {
         },
       ),
     },
+
+    carts: {
+      create:(cart?: {attributes: Record<string, string>}) => StudioSDK.handleCall<any>(
+        {
+          method: 'POST',
+          url: this.getUrl('api', ['public', 'carts', this.company, this.project]),
+          headers: this.getHeaders(),
+          data: cart,
+        },
+      ),
+      update:(internalId: ObjectIdString, items: any) => StudioSDK.handleCall<any>(
+        {
+          method: 'PUT',
+          url: this.getUrl('api', ['public', 'carts', this.company, this.project, internalId]),
+          headers: this.getHeaders(),
+          data: items,
+        },
+      ),
+      getById:(internalId: ObjectIdString) => StudioSDK.handleCall<any>(
+        {
+          method: 'GET',
+          url: this.getUrl('api', ['public', 'carts', this.company, this.project, internalId]),
+          headers: this.getHeaders(),
+        },
+      ),
+      getFinishedById:(internalId: ObjectIdString) => StudioSDK.handleCall<any>(
+        {
+          method: 'GET',
+          url: this.getUrl('api', ['public', 'carts', this.company, this.project, 'finished', internalId]),
+          headers: this.getHeaders(),
+        },
+      ),
+      getProduct:(id: string) => StudioSDK.handleCall<any>(
+        {
+          method: 'GET',
+          url: this.getUrl('api', ['public', 'carts', this.company, this.project, 'product', id]),
+          headers: this.getHeaders(),
+        },
+      ),
+      finalize:(internalId: ObjectIdString) => StudioSDK.handleCall<any>(
+        {
+          method: 'PUT',
+          url: this.getUrl('api', ['public', 'carts', this.company, this.project, 'finalize', internalId]),
+          headers: this.getHeaders(),
+        },
+      ),
+    }
   };
 
   members = {
@@ -517,7 +566,7 @@ export default class StudioSDK {
 
     lists: {
 
-      join: (listId: string, message: string | undefined, category: string, agreements: ContactAgreement[]) => StudioSDK.handleCall<string>(
+      join: (listId: string, message: string | undefined, category: string, agreements: ContactAgreement[], structure: Record<string, string> | undefined, options: {uuid: ObjectIdString, parentId: string}) => StudioSDK.handleCall<string>(
         {
           method: 'POST',
           url: this.getUrl('api', ['members', 'lists', 'participants', this.company, this.project, listId, 'join']),
@@ -526,6 +575,8 @@ export default class StudioSDK {
             agreements,
             message,
             category,
+            structure,
+            options,
           },
         },
       ),
@@ -568,7 +619,7 @@ export default class StudioSDK {
         },
       ),
 
-      get: () => StudioSDK.handleCall<Me>(
+      get: () => StudioSDK.handleCall<CustomerPerson>(
         {
           method: 'GET',
           url: this.getUrl('api', ['members', 'me', this.company, this.project]),
