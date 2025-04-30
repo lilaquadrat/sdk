@@ -1,6 +1,6 @@
 {
   "name": "@lilaquadrat/sdk",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "sdk for accessing STUDIO api",
   "type": "module",
   "author": {
@@ -14,11 +14,21 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "prepublish": "tsc",
+    "prepare": "tsc",
     "release": "standard-version"
   },
   "module": "lib/index.js",
   "main": "lib/index.js",
+  "exports": {
+    ".": {
+      "import": "./lib/index.js",
+      "types": "./lib/index.d.ts"
+    }
+  },
+  "types": "lib/index.d.ts",
+  "engines": {
+    "node": ">=14.16"
+  },
   "publishConfig": {
     "access": "public"
   },
