@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.9](https://github.com/lilaquadrat/sdk/compare/v0.0.8...v0.0.9) (2025-04-30)
+
+
+### Features
+
+* **carts & lists:** added carts endpoints & join lists with structures ([df9bc9a](https://github.com/lilaquadrat/sdk/commit/df9bc9acf559055ed092e1070663210c95b29ff3))
+
 ### [0.0.8](https://github.com/lilaquadrat/sdk/compare/v0.0.7...v0.0.8) (2024-04-24)
 
 
