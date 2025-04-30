@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.10](https://github.com/lilaquadrat/sdk/compare/v0.0.9...v0.0.10) (2025-04-30)
+
+
+### Bug Fixes
+
+* **package:** update scripts and add exports configuration ([cd9be17](https://github.com/lilaquadrat/sdk/commit/cd9be1709fa2f5145850a65b215e913d2afe8571))
+
 ### [0.0.9](https://github.com/lilaquadrat/sdk/compare/v0.0.8...v0.0.9) (2025-04-30)
 
 
