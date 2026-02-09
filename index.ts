@@ -619,6 +619,14 @@ export default class StudioSDK {
         },
       ),
 
+      resendConfirmationMail: () => StudioSDK.handleCall<any>(
+        {
+          method: 'POST',
+          url: this.getUrl('api', ['members', 'me', this.company, this.project, 'resendConfirmationMail']),
+          headers: this.getHeaders(),
+        },
+      ),
+
       get: () => StudioSDK.handleCall<CustomerPerson>(
         {
           method: 'GET',
