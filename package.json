@@ -1,6 +1,6 @@
 {
   "name": "@lilaquadrat/sdk",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "sdk for accessing STUDIO api",
   "type": "module",
   "author": {

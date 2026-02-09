@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.11](https://github.com/lilaquadrat/sdk/compare/v0.0.10...v0.0.11) (2026-02-09)
+
+
+### Features
+
+* **resendconfirmationmail:** added resendConfirmationMail call ([f37e94c](https://github.com/lilaquadrat/sdk/commit/f37e94c599ee55f9874528e36acbebe2a101b7ca))
+
 ### [0.0.10](https://github.com/lilaquadrat/sdk/compare/v0.0.9...v0.0.10) (2025-04-30)
 
 
