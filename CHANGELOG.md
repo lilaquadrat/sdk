@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.0](https://github.com/lilaquadrat/sdk/compare/v0.0.11...v0.1.0) (2026-04-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* **base urls:** base url changed
+
+### Bug Fixes
+
+* **base urls:** changed base url ([9aeeafc](https://github.com/lilaquadrat/sdk/commit/9aeeafc87ffc26ad77e6c471818eeeac451a20dc))
+
 ### [0.0.11](https://github.com/lilaquadrat/sdk/compare/v0.0.10...v0.0.11) (2026-02-09)
 
 
