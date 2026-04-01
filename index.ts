@@ -53,12 +53,12 @@ export default class StudioSDK {
 
   readonly endpoints = {
     live: {
-      api: 'https://api.lilaquadrat.de',
-      media: 'https://media.lilaquadrat.de',
+      api: 'https://api.lilaquadrat.studio',
+      media: 'https://media.lilaquadrat.studio',
     },
     next: {
-      api: 'https://next-api.lilaquadrat.de',
-      media: 'https://next-media.lilaquadrat.de',
+      api: 'https://api.lilaquadrat.dev',
+      media: 'https://media.lilaquadrat.dev',
     },
   };
 
