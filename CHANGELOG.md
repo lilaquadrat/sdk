@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.1](https://github.com/lilaquadrat/sdk/compare/v0.1.0...v0.1.1) (2026-06-01)
+
+
+### Features
+
+* **storage:** added support for members storage ([f0d8026](https://github.com/lilaquadrat/sdk/commit/f0d8026e0605f0b4f690c05f1b2e6f011283f9ca))
+
 ## [0.1.0](https://github.com/lilaquadrat/sdk/compare/v0.0.11...v0.1.0) (2026-04-01)
 
 
