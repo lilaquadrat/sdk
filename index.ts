@@ -47,7 +47,58 @@ export type SDKCallOptions = {
   cacheLifetime?: number
 };
 
+export type UploadFile = {
+  filename: string
+  size: number
+  mimetype: string
+  data: Blob | ArrayBuffer | Uint8Array
+};
+
+export type UploadOptions = {
+  list?: ObjectIdString
+  thumbnails?: boolean
+  overwrite?: boolean
+  contentId?: ObjectIdString
+  structureInternalId?: ObjectIdString
+  moduleUuid?: string
+};
+
+export type UploadConfig = {
+  chunkSize?: number
+  retries?: number
+  retryDelay?: number
+  concurrency?: number
+};
+
+export type UploadProgressPhase =
+  | { phase: 'create-upload-start' }
+  | { phase: 'create-upload-done', uploadId: string }
+  | { phase: 'chunk-start', chunkIndex: number, totalChunks: number }
+  | { phase: 'chunk-done', chunkIndex: number, totalChunks: number }
+  | { phase: 'done', uploadId: string }
+  | { phase: 'error', error: unknown };
+
+export type UploadProgressEvent = UploadProgressPhase & {
+  file: UploadFile
+  fileIndex?: number
+  totalFiles?: number
+};
+
+export type UploadProgressCallback = (event: UploadProgressEvent) => void;
+
+export type UploadResult = {
+  uploadId: string
+  filename: string
+};
+
+export type UploadMultipleResult = {
+  successCount: number
+  failureCount: number
+  results: { file: UploadFile, uploadId?: string, error?: unknown }[]
+};
+
 let cachedCalls: Record<string, SDKResponse<unknown> & SDKCache> = {};
+let inFlightCalls: Record<string, Promise<SDKResponse<unknown>>> = {};
 
 export default class StudioSDK {
 
@@ -87,7 +138,17 @@ export default class StudioSDK {
     mode?: SDKModes,
     customEndpoints?: { api: string, media: string }
     universalModel?: string
+    upload?: UploadConfig
   } = { app: '' };
+
+  uploadConfig: Required<UploadConfig> = {
+    chunkSize: 6 * 1024 * 1024,
+    retries: 3,
+    retryDelay: 500,
+    concurrency: 5,
+  };
+
+  static RETRY_STATUS_CODES: ReadonlySet<number> = new Set([408, 425, 429, 500, 502, 503, 504]);
 
   constructor(options: StudioSDK['options']) {
 
@@ -104,6 +165,76 @@ export default class StudioSDK {
     this.app = options.app;
 
     if (options.universalModel) this.universalModel = options.universalModel;
+
+    if (options.upload) this.uploadConfig = { ...this.uploadConfig, ...options.upload };
+
+  }
+
+  static calculateChunks(fileSize: number, chunkSize: number) {
+
+    if (fileSize > chunkSize) return Math.ceil(fileSize / chunkSize);
+    return 1;
+
+  }
+
+  static toBlob(data: Blob | ArrayBuffer | Uint8Array): Blob {
+
+    if (data instanceof Blob) return data;
+    return new Blob([data as BlobPart]);
+
+  }
+
+  static async batch<T>(items: T[], fn: (item: T, index: number) => Promise<void>, concurrency: number) {
+
+    let cursor = 0;
+    const workers = Array.from({ length: Math.min(concurrency, items.length || 1) }, async () => {
+
+      while (true) {
+
+        const idx = cursor++;
+        if (idx >= items.length) break;
+        await fn(items[idx], idx);
+
+      }
+
+    });
+    await Promise.all(workers);
+
+  }
+
+  private async sleepBackoff(attempt: number) {
+
+    const cap = this.uploadConfig.retryDelay * Math.pow(2, attempt);
+    const backoff = Math.random() * cap;
+    await new Promise((resolve) => setTimeout(resolve, backoff));
+
+  }
+
+  private async withRetry<T>(fn: () => Promise<T>): Promise<T> {
+
+    let lastError: unknown;
+
+    for (let attempt = 0; attempt <= this.uploadConfig.retries; attempt++) {
+
+      try {
+
+        return await fn();
+
+      } catch (error) {
+
+        lastError = error;
+        const status = (error as { response?: { status?: number } })?.response?.status;
+        const retryable = !status || StudioSDK.RETRY_STATUS_CODES.has(status);
+
+        if (!retryable || attempt >= this.uploadConfig.retries) throw error;
+
+        await this.sleepBackoff(attempt);
+
+      }
+
+    }
+
+    throw lastError;
 
   }
 
@@ -196,23 +327,43 @@ export default class StudioSDK {
 
     // }
 
+    const url = axios.getUri(call);
+
     if (call.method === 'GET' && !options?.bypassCache) {
 
-      const cacheHit = StudioSDK.cache<T>(axios.getUri(call), undefined, options);
+      const cacheHit = StudioSDK.cache<T>(url, undefined, options);
 
       if (cacheHit) return Promise.resolve(cacheHit);
 
+      const dedupKey = options?.id ? options.id : StudioSDK.getCacheKey(url);
+
+      const inFlight = inFlightCalls[dedupKey];
+
+      if (inFlight) return inFlight as Promise<SDKResponse<T>>;
+
     }
 
-    return axios.request(call)
+    const promise = axios.request(call)
       .then((response) => {
 
-        if (call.method === 'GET') StudioSDK.cache(axios.getUri(call), response, options);
+        if (call.method === 'GET') StudioSDK.cache(url, response, options);
 
         return response;
 
       })
       .then((response) => ({ data: response.data, status: response.status }));
+
+    if (call.method === 'GET' && !options?.bypassCache) {
+
+      const dedupKey = options?.id ? options.id : StudioSDK.getCacheKey(url);
+
+      inFlightCalls[dedupKey] = promise;
+
+      promise.finally(() => { delete inFlightCalls[dedupKey]; });
+
+    }
+
+    return promise;
 
   }
 
@@ -656,6 +807,187 @@ export default class StudioSDK {
       ),
 
 
+
+    },
+
+    storage: {
+
+      listProject: (bucket: string, site: number = 1, options?: { assetId?: string[] }) => StudioSDK.handleCall<DataObject<any>>(
+        {
+          method: 'GET',
+          url: this.getUrl('media', ['members', bucket, this.company, this.project, 'list', site.toString()]),
+          headers: this.getHeaders(),
+          params: options,
+        },
+        {
+          group: 'storage',
+          action: 'listProject',
+        },
+      ),
+
+      listCompany: (bucket: string, site: number = 1, options?: { assetId?: string[] }) => StudioSDK.handleCall<DataObject<any>>(
+        {
+          method: 'GET',
+          url: this.getUrl('media', ['members', bucket, this.company, 'list', site.toString()]),
+          headers: this.getHeaders(),
+          params: options,
+        },
+        {
+          group: 'storage',
+          action: 'listCompany',
+        },
+      ),
+
+      remove: (bucket: string, internalId: ObjectIdString) => StudioSDK.handleCall<any>(
+        {
+          method: 'DELETE',
+          url: this.getUrl('media', ['members', bucket, this.company, this.project, internalId]),
+          headers: this.getHeaders(),
+        },
+      ),
+
+      token: (bucket: string, scope: 'company' | 'project') => StudioSDK.handleCall<{token: string, expiresIn: number, createdAt: number, expiresAt: number}>(
+        {
+          method: 'GET',
+          url: this.getUrl('media', ['members', bucket, this.company, ...(scope === 'project' ? [this.project] : []), 'token']),
+          headers: this.getHeaders(),
+        },
+      ),
+
+      createUpload: (payload: {
+        filename: string,
+        size: number,
+        mimetype: string,
+        chunks: number,
+        list?: ObjectIdString,
+        options?: UploadOptions,
+      }, bucket: string) => {
+        
+        return StudioSDK.handleCall<string>(
+          {
+            method: 'POST',
+            url: this.getUrl('media', ['members', bucket, this.company, this.project, 'upload']),
+            headers: this.getHeaders(),
+            data: payload,
+          },
+        );
+      },
+
+      uploadChunk: (uploadId: string, bucket: string, chunkIndex: number, chunk: Blob) => this.withRetry(async () => {
+
+        const form = new FormData();
+        form.append('file', chunk);
+        form.append('index', chunkIndex.toString());
+
+        const response = await axios.request({
+          method: 'POST',
+          url: this.getUrl('media', ['members', bucket, this.company, this.project, uploadId]),
+          headers: this.getHeaders(),
+          data: form,
+        });
+
+        return { data: response.data, status: response.status } as SDKResponse<unknown>;
+
+      }),
+
+      upload: async (file: UploadFile, bucket: string, options: UploadOptions = {}, onProgress?: UploadProgressCallback): Promise<UploadResult> => {
+
+        const emit = (phase: UploadProgressPhase) => onProgress?.({ ...phase, file });
+        const totalChunks = StudioSDK.calculateChunks(file.size, this.uploadConfig.chunkSize);
+
+        emit({ phase: 'create-upload-start' });
+
+        let uploadId: string;
+
+        try {
+
+          const { list, thumbnails, overwrite, contentId, structureInternalId, moduleUuid } = options;
+          const createRes = await this.members.storage.createUpload({
+            filename: file.filename,
+            size: file.size,
+            mimetype: file.mimetype,
+            chunks: totalChunks,
+            list,
+            options: { thumbnails, overwrite, contentId, structureInternalId, moduleUuid },
+          },
+          bucket);
+          uploadId = createRes.data;
+
+        } catch (error) {
+
+          emit({ phase: 'error', error });
+          throw error;
+
+        }
+
+        emit({ phase: 'create-upload-done', uploadId });
+
+        const blob = StudioSDK.toBlob(file.data);
+
+        for (let i = 0; i < totalChunks; i++) {
+
+          const start = i * this.uploadConfig.chunkSize;
+          const end = Math.min(start + this.uploadConfig.chunkSize, blob.size);
+          const chunk = blob.slice(start, end);
+
+          emit({ phase: 'chunk-start', chunkIndex: i, totalChunks });
+
+          try {
+
+            await this.members.storage.uploadChunk(uploadId, bucket, i, chunk);
+
+          } catch (error) {
+
+            emit({ phase: 'error', error });
+            throw error;
+
+          }
+
+          emit({ phase: 'chunk-done', chunkIndex: i, totalChunks });
+
+        }
+
+        emit({ phase: 'done', uploadId });
+
+        return { uploadId, filename: file.filename };
+
+      },
+
+      uploadMultiple: async (files: UploadFile[], bucket: string, options: UploadOptions = {}, onProgress?: UploadProgressCallback): Promise<UploadMultipleResult> => {
+
+        const totalFiles = files.length;
+        const results: UploadMultipleResult['results'] = [];
+        let successCount = 0;
+        let failureCount = 0;
+
+        await StudioSDK.batch(
+          files,
+          async (file, index) => {
+
+            const wrapped: UploadProgressCallback | undefined = onProgress
+              ? (event) => onProgress({ ...event, fileIndex: index, totalFiles })
+              : undefined;
+
+            try {
+
+              const result = await this.members.storage.upload(file, bucket, options, wrapped);
+              results[index] = { file, uploadId: result.uploadId };
+              successCount++;
+
+            } catch (error) {
+
+              results[index] = { file, error };
+              failureCount++;
+
+            }
+
+          },
+          this.uploadConfig.concurrency,
+        );
+
+        return { successCount, failureCount, results };
+
+      },
 
     }
   };
