@@ -838,13 +838,19 @@ export default class StudioSDK {
         },
       ),
 
-      remove: (bucket: string, internalId: ObjectIdString) => StudioSDK.handleCall<any>(
-        {
-          method: 'DELETE',
-          url: this.getUrl('media', ['members', bucket, this.company, this.project, internalId]),
-          headers: this.getHeaders(),
-        },
-      ),
+      remove: (bucket: string, internalId: ObjectIdString) => {
+        const path = bucket === 'customers'
+          ? ['members', bucket, this.company, internalId]
+          : ['members', bucket, this.company, this.project, internalId];
+
+        return StudioSDK.handleCall<any>(
+          {
+            method: 'DELETE',
+            url: this.getUrl('media', path),
+            headers: this.getHeaders(),
+          },
+        );
+      },
 
       token: (bucket: string, scope: 'company' | 'project') => StudioSDK.handleCall<{token: string, expiresIn: number, createdAt: number, expiresAt: number}>(
         {

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.2](https://github.com/lilaquadrat/sdk/compare/v0.1.1...v0.1.2) (2026-06-04)
+
+
+### Bug Fixes
+
+* **storage:** omit project from URL when bucket is customers ([83612de](https://github.com/lilaquadrat/sdk/commit/83612dea5c7ae47190eb50a9c12a21df984cb56e))
+
 ### [0.1.1](https://github.com/lilaquadrat/sdk/compare/v0.1.0...v0.1.1) (2026-06-01)
 
 
