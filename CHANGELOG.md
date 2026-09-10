@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.0](https://github.com/lilaquadrat/sdk/compare/v0.1.3...v0.2.0) (2026-09-10)
+
+### Changed
+
+* dropped the `@lilaquadrat/studio` dependency ([f340489](https://github.com/lilaquadrat/sdk/commit/f340489a945b352f99bc1e80a82cdf5b462d9527)). The sdk used one function from it, `hardCopy`, which is now inlined. Every consumer that imports `@lilaquadrat/studio` itself has to declare it - it is no longer installed transitively through this package.
+
 ### [0.1.3](https://github.com/lilaquadrat/sdk/compare/v0.1.2...v0.1.3) (2026-07-20)
 
 ### [0.1.2](https://github.com/lilaquadrat/sdk/compare/v0.1.1...v0.1.2) (2026-06-04)
