@@ -1,6 +1,15 @@
 import axios, { AxiosResponse, AxiosRequestConfig, HttpStatusCode } from 'axios';
 import { BasicData, Contact, ContactAgreement, Content, CustomerPerson, Customers, DataObject, List, ListOfModels, ListParticipants, ListPartiticpantsDetails, Location, ObjectIdString } from '@lilaquadrat/interfaces';
-import { hardCopy } from '@lilaquadrat/studio/lib/esm/frontend';
+
+/**
+ * a copy that shares no references with its source.
+ *
+ * inlined on purpose: this was the sdk's only use of @lilaquadrat/studio, and
+ * that dependency pinned the whole backend package (^8) into every project that
+ * installs the sdk - including designs, where it dragged a second studio major
+ * into the module graph.
+ */
+const hardCopy = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 
 // const mockJs = {};
 // const ISMOCK = false;
