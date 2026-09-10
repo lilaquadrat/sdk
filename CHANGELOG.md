@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.1](https://github.com/lilaquadrat/sdk/compare/v0.2.0...v0.2.1) (2026-09-10)
+
+
+### Bug Fixes
+
+* **build:** declare the es2018 lib the code needs ([e2b9534](https://github.com/lilaquadrat/sdk/commit/e2b953487c7ed13321f077edd1dc587179ab1f4b))
+
 ## [0.2.0](https://github.com/lilaquadrat/sdk/compare/v0.1.3...v0.2.0) (2026-09-10)
 
 ### Changed
