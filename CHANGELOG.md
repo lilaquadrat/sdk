@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.2](https://github.com/lilaquadrat/sdk/compare/v0.2.1...v0.2.2) (2026-10-04)
+
+
+### Features
+
+* **members:** add list state and structure update plus me update ([8fe21a7](https://github.com/lilaquadrat/sdk/commit/8fe21a7a8f3960bdb3e20f2276e25ce0f6b4d87f))
+
 ### [0.2.1](https://github.com/lilaquadrat/sdk/compare/v0.2.0...v0.2.1) (2026-09-10)
 
 

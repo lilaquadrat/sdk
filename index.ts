@@ -757,9 +757,51 @@ export default class StudioSDK {
         },
       ),
 
+      /**
+       * member self-service: withdraw the own entry from a list
+       */
+      updateState: async (listId: string, state: ListParticipants['state']) => {
+        const response = await StudioSDK.handleCall<ListParticipants>({
+          method: 'PUT',
+          url: this.getUrl('api', ['members', 'lists', 'participants', this.company, this.project, listId, 'state']),
+          headers: this.getHeaders(),
+          data: { state },
+        });
+
+        StudioSDK.flushId(listId);
+        return response;
+      },
+
+      /**
+       * member self-service: submit the own structure answers for a list
+       */
+      updateStructure: async (listId: string, structure: Record<string, string | boolean | number | string[]>) => {
+        const response = await StudioSDK.handleCall<ListParticipants>({
+          method: 'PUT',
+          url: this.getUrl('api', ['members', 'lists', 'participants', this.company, this.project, listId, 'structure']),
+          headers: this.getHeaders(),
+          data: { structure },
+        });
+
+        StudioSDK.flushId(listId);
+        return response;
+      },
+
     },
 
     me: {
+
+      update: async (data: Partial<Pick<CustomerPerson, 'prename' | 'name' | 'addressAddition' | 'street' | 'streetNumber' | 'zipcode' | 'city' | 'country' | 'osm_id' | 'phone'>>) => {
+        const response = await StudioSDK.handleCall<CustomerPerson>({
+          method: 'PUT',
+          url: this.getUrl('api', ['members', 'me', this.company, this.project]),
+          headers: this.getHeaders(),
+          data,
+        });
+
+        StudioSDK.flushCache('me');
+        return response;
+      },
 
       connect: (customerId: string) => StudioSDK.handleCall<any>(
         {
