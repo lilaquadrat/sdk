@@ -69,10 +69,10 @@
   resolved "https://registry.yarnpkg.com/@hutson/parse-repository-url/-/parse-repository-url-3.0.2.tgz#98c23c950a3d9b6c8f0daed06da6c3af06981340"
   integrity sha512-H9XAx3hc0BQHY6l+IFSWHDySypcXsvsuLhgYLUGywmJ5pswRVQJUHpOsobnLYp2ZUaUlKiKDrgWWhosOwAEM8Q==
 
-"@lilaquadrat/interfaces@^1.3.1":
-  version "1.35.0"
-  resolved "https://registry.yarnpkg.com/@lilaquadrat/interfaces/-/interfaces-1.35.0.tgz#e6c7500016fb78817ab6f1810ab2587805a7c690"
-  integrity sha512-pjlDYMXq+Uy+16PK02m4i3vO8d9Xd0PmrqPvorxe634H9LjZQxMHdjI3HYf7K82IZBEjNL9WBdQQbfVBDVospg==
+"@lilaquadrat/interfaces@^1.53.1":
+  version "1.53.1"
+  resolved "https://registry.yarnpkg.com/@lilaquadrat/interfaces/-/interfaces-1.53.1.tgz#2c3cfd2b25d5b4aaedf30c41f866df19a5670847"
+  integrity sha512-ci7ER3TLQHItM+DoD/RpDtLt6NFTj49rRfyIO7+VbTjViSGHjdoKBfNiotLZG4yX6BgrnzSMrf/c/VlBdvDTKA==
   dependencies:
     typescript "^5.3.3"
 
