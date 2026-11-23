@@ -1,5 +1,5 @@
 import axios, { AxiosResponse, AxiosRequestConfig, HttpStatusCode } from 'axios';
-import { BasicData, Contact, ContactAgreement, Content, CustomerPerson, Customers, DataObject, List, ListOfModels, ListParticipants, ListPartiticpantsDetails, Location, ObjectIdString } from '@lilaquadrat/interfaces';
+import { BasicData, Contact, ContactAgreement, Content, CustomerPerson, Customers, DataObject, List, ListOfModels, ListParticipants, ListParticipantWithList, ListPartiticpantsDetails, Location, MemberShift, ObjectIdString, ShiftPlanningPage } from '@lilaquadrat/interfaces';
 
 /**
  * a copy that shares no references with its source.
@@ -758,6 +758,28 @@ export default class StudioSDK {
       ),
 
       /**
+       * get the entries of the logged in member with their list attached
+       */
+      list: (site: number = 0, search?: string, state?: List['state'], mode?: List['mode'], sort?: string, order?: number) => StudioSDK.handleCall<DataObject<ListParticipantWithList[]>>(
+        {
+          method: 'GET',
+          url: this.getUrl('api', ['members', 'lists', this.company, this.project, 'list', site.toString()]),
+          headers: this.getHeaders(),
+          params: {
+            search,
+            state,
+            mode,
+            sort,
+            order,
+          },
+        },
+        {
+          group: 'lists',
+          action: 'list',
+        },
+      ),
+
+      /**
        * member self-service: withdraw the own entry from a list
        */
       updateState: async (listId: string, state: ListParticipants['state']) => {
@@ -1046,7 +1068,170 @@ export default class StudioSDK {
 
       },
 
+    },
+
+    shifts: {
+
+      list: (site: number = 1, options?: { from?: string, to?: string, listInternalId?: string, planInternalId?: string }) => StudioSDK.handleCall<ShiftPlanningPage<MemberShift>>(
+        {
+          method: 'GET',
+          url: this.getUrl('api', ['members', 'shifts', this.company, this.project, 'list', site.toString()]),
+          headers: this.getHeaders(),
+          params: options,
+        },
+        {
+          group: 'shifts',
+          action: 'list',
+        },
+      ),
+
+      timeTrackingProject: (planInternalId: string) => StudioSDK.handleCall<{ id: string, name: string } | null>(
+        {
+          method: 'GET',
+          url: this.getUrl('api', ['members', 'shifts', this.company, this.project, 'plans', planInternalId, 'time-tracking-project']),
+          headers: this.getHeaders(),
+        },
+        {
+          group: 'shifts',
+          action: 'timeTrackingProject',
+        },
+      ),
+
+    },
+
+    tracker: {
+
+      /**
+       * shifts the member may book tracked time on; the server resolves the caller's customer,
+       * so the member needs no `shifts:read` scope.
+       */
+      bookableShifts: (timeTrackingProject: string, options?: { from?: string, to?: string }) => StudioSDK.handleCall<Array<{ _id: string, title: string, start: string, end: string }>>(
+        {
+          method: 'GET',
+          url: this.getUrl('api', ['members', 'tracker', this.company, this.project, 'time-tracking-projects', timeTrackingProject, 'shifts']),
+          headers: this.getHeaders(),
+          params: options,
+        },
+        {
+          group: 'tracker',
+          action: 'bookableShifts',
+        },
+      ),
+
+      /**
+       * every entry the calling member has in a time tracking project, chronological and without a
+       * window: their own entries plus the ones an admin booked for their customer. a 204 answers
+       * without entries, so check ``status`` before reading ``data``.
+       */
+      bookings: (timeTrackingProject: string) => StudioSDK.handleCall<Array<{ id: string, category?: string, shift?: string, description?: string, user: { id: string, prename?: string, lastname?: string }, startTime?: string, endTime?: string, currentTime: number }>>(
+        {
+          method: 'GET',
+          url: this.getUrl('api', ['members', 'tracker', this.company, this.project, 'time-tracking-projects', timeTrackingProject, 'bookings']),
+          headers: this.getHeaders(),
+        },
+        {
+          group: 'tracker',
+          action: 'bookings',
+        },
+      ),
+
+      createBookings: async (entries: Array<{ mode: 'stopwatch' | 'timeframe', timeTrackingProject: string, shift?: string, category?: string, description?: string, startTime?: string, endTime?: string, currentTime?: number }>) => {
+        // the API requires currentTime on every entry; derive it for a timeframe the caller left without one
+        const data = entries.map((entry) => {
+          if (entry.currentTime) return entry;
+          if (entry.startTime && entry.endTime) {
+
+            return { ...entry, currentTime: new Date(entry.endTime).getTime() - new Date(entry.startTime).getTime() };
+
+          }
+          return entry;
+
+        });
+
+        const response = await StudioSDK.handleCall<{ ids: Record<number, string>, documentsInserted: number, documentsProvided: number }>(
+          {
+            method: 'POST',
+            url: this.getUrl('api', ['members', 'tracker', this.company, this.project]),
+            headers: this.getHeaders(),
+            data,
+          },
+        );
+
+        StudioSDK.flushCache('tracker');
+        return response;
+      },
+
+      changeBooking: async (id: string, input: { startTime?: string, endTime?: string, description?: string }) => {
+        const response = await StudioSDK.handleCall<void>(
+          {
+            method: 'PUT',
+            url: this.getUrl('api', ['members', 'tracker', this.company, this.project, id]),
+            headers: this.getHeaders(),
+            data: input,
+          },
+        );
+
+        StudioSDK.flushCache('tracker');
+        return response;
+      },
+
+      removeBooking: async (id: string) => {
+        const response = await StudioSDK.handleCall<void>(
+          {
+            method: 'DELETE',
+            url: this.getUrl('api', ['members', 'tracker', this.company, this.project, id]),
+            headers: this.getHeaders(),
+          },
+        );
+
+        StudioSDK.flushCache('tracker');
+        return response;
+      },
+
     }
+  };
+
+  tracker = {
+
+    createBooking: (input: { mode: 'stopwatch' | 'timeframe', timeTrackingProject: string, shift?: string, category?: string, description?: string, startTime?: string, endTime?: string }) => StudioSDK.handleCall<{ _id: string, id?: string | number }>(
+      {
+        method: 'POST',
+        url: this.getUrl('api', ['tracker', this.company, this.project]),
+        headers: this.getHeaders(),
+        data: input,
+      },
+      {
+        group: 'tracker',
+        action: 'createBooking',
+      },
+    ),
+
+    changeBooking: (id: string, input: { startTime?: string, endTime?: string, description?: string }) => StudioSDK.handleCall<void>(
+      {
+        method: 'PUT',
+        url: this.getUrl('api', ['tracker', this.company, this.project, id]),
+        headers: this.getHeaders(),
+        data: input,
+      },
+      {
+        group: 'tracker',
+        action: 'changeBooking',
+      },
+    ),
+
+    bookings: (timeTrackingProject: string, options: { from: string, to: string }) => StudioSDK.handleCall<Array<{ id: string, category?: string, shift?: string, description?: string, user: { id: string, prename?: string, lastname?: string }, startTime?: string, endTime?: string, currentTime: number }>>(
+      {
+        method: 'GET',
+        url: this.getUrl('api', ['tracker', this.company, this.project, 'time-tracking-projects', timeTrackingProject, 'bookings']),
+        headers: this.getHeaders(),
+        params: options,
+      },
+      {
+        group: 'tracker',
+        action: 'bookings',
+      },
+    ),
+
   };
 
 
