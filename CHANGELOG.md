@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.3](https://github.com/lilaquadrat/sdk/compare/v0.2.2...v0.2.3) (2026-11-23)
+
+
+### Features
+
+* **members:** add shift, tracking and own list endpoints ([d87fe66](https://github.com/lilaquadrat/sdk/commit/d87fe66e41091f368bd032ce772d612d8258ef8d))
+
 ### [0.2.2](https://github.com/lilaquadrat/sdk/compare/v0.2.1...v0.2.2) (2026-10-04)
 
 
